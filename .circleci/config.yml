@@ -168,28 +168,28 @@ jobs:
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"   
 
-  # configure-infrastructure:
-  #   docker:
-  #     - image: python:3.7-alpine3.11
-  #   steps:
-  #     - checkout
-  #     - add_ssh_keys:
-  #         fingerprints: ["7f:fe:0a:66:7d:cf:b8:30:2d:5b:90:89:4e:9d:ac:8d"]
-  #     - attach_workspace:
-  #         at: ~/
-  #     - run:
-  #         name: Install dependencies
-  #         command: |
-  #           apk add --update tar gzip ansible nodejs npm
-  #           pip install awscli
-  #     - run:
-  #         name: Configure server
-  #         command: |
-  #           cd .circleci/ansible
-  #           ansible-playbook -i inventory.txt configure-server.yml
-  #         no_output_timeout: 30m
-  #     - destroy-environment:
-  #         workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"      
+   configure-infrastructure:
+     docker:
+       - image: python:3.7-alpine3.11
+     steps:
+       - checkout
+       - add_ssh_keys:
+           fingerprints: ["7f:fe:0a:66:7d:cf:b8:30:2d:5b:90:89:4e:9d:ac:8d"]
+       - attach_workspace:
+           at: ~/
+       - run:
+           name: Install dependencies
+           command: |
+             apk add --update tar gzip ansible nodejs npm
+             pip install awscli
+       - run:
+           name: Configure server
+           command: |
+             cd .circleci/ansible
+             ansible-playbook -i inventory.txt configure-server.yml
+           no_output_timeout: 30m
+       - destroy-environment:
+           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"      
 
 #   run-migrations:
 #     docker:
@@ -322,8 +322,8 @@ workflows:
           filters:
             branches:
               only: master
-    #   - configure-infrastructure:
-    #       requires: [deploy-infrastructure]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
 #       - run-migrations:
 #           requires: [configure-infrastructure]
 #       - deploy-frontend:
